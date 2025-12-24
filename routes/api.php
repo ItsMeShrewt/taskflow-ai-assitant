@@ -10,7 +10,13 @@ Route::middleware(['web', 'auth'])->group(function () {
     
     // Task Routes
     Route::get('tasks/unread-count', [TaskController::class, 'unreadCount']);
-    Route::apiResource('tasks', TaskController::class);
+    Route::apiResource('tasks', TaskController::class)->names([
+        'index' => 'api.tasks.index',
+        'store' => 'api.tasks.store',
+        'show' => 'api.tasks.show',
+        'update' => 'api.tasks.update',
+        'destroy' => 'api.tasks.destroy',
+    ]);
     
     // Subtask Routes
     Route::apiResource('tasks.subtasks', SubtaskController::class)
