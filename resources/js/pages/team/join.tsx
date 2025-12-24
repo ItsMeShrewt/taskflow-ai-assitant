@@ -28,6 +28,10 @@ export default function JoinTeam({ teams }: Props) {
         setData('team_id', team.id.toString());
     };
 
+    const handleBack = () => {
+        router.visit('/role-selection');
+    };
+
     const submit = (e: FormEvent) => {
         e.preventDefault();
         post('/team/join');
@@ -38,8 +42,21 @@ export default function JoinTeam({ teams }: Props) {
             <Head title="Join a Team" />
             
             <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-                <Card className="w-full max-w-2xl">
-                    <CardHeader className="text-center">
+                <Card className="w-full max-w-2xl relative">
+                    {/* Back Button */}
+                    <div className="absolute top-4 left-4 z-10">
+                        <Button 
+                            variant="ghost" 
+                            onClick={handleBack}
+                            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                            size="sm"
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            <span>Back</span>
+                        </Button>
+                    </div>
+                    
+                    <CardHeader className="text-center pt-12">
                         <div className="mx-auto mb-4 w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center">
                             <Users className="w-10 h-10 text-purple-600" />
                         </div>

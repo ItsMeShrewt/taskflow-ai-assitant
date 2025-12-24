@@ -15,6 +15,32 @@ class DashboardController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        
+        // Check if user is pending approval
+        if ($user->membership_status === 'pending') {
+            return Inertia::render('dashboard', [
+                'isPending' => true,
+                'teamName' => $user->team?->name,
+                'stats' => [
+                    'total' => 0,
+                    'completed' => 0,
+                    'pending' => 0,
+                    'in_progress' => 0,
+                    'urgent' => 0,
+                    'overdue' => 0,
+                ],
+                'recentTasks' => null,
+                'upcomingTasks' => null,
+                'priorityBreakdown' => [
+                    'low' => 0,
+                    'medium' => 0,
+                    'high' => 0,
+                    'urgent' => 0,
+                ],
+                'canManageTasks' => false,
+            ]);
+        }
+        
         $canManageTasks = $user->canManageTasks();
 
         // Build base query based on role

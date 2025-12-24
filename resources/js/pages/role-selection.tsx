@@ -1,4 +1,4 @@
-import { Head, router, Link } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Users, UserCog, ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,8 +8,13 @@ export default function RoleSelection() {
         router.post('/role-selection', { role });
     };
     
-    const handleLogout = () => {
-        router.post('/logout');
+    const handleBack = () => {
+        // Delete the account and logout
+        router.delete('/role-selection/cancel', {
+            onSuccess: () => {
+                router.visit('/');
+            }
+        });
     };
 
     return (
@@ -22,13 +27,11 @@ export default function RoleSelection() {
                     <div className="mb-6">
                         <Button 
                             variant="outline" 
-                            asChild
-                            className="border-gray-300 bg-white/80 hover:bg-white"
+                            onClick={handleBack}
+                            className="border-gray-300 bg-white/80 hover:bg-white text-gray-700 dark:text-gray-900"
                         >
-                            <Link href="/">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Back to Welcome
-                            </Link>
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            <span>Back to Welcome</span>
                         </Button>
                     </div>
 

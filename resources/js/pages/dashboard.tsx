@@ -34,6 +34,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface DashboardProps extends PageProps {
+    isPending?: boolean;
+    teamName?: string;
     stats: {
         total: number;
         completed: number;
@@ -72,6 +74,8 @@ const statusConfig = {
 };
 
 export default function Dashboard({ 
+    isPending,
+    teamName,
     stats, 
     recentTasks, 
     upcomingTasks, 
@@ -82,8 +86,52 @@ export default function Dashboard({
     priorityBreakdown,
     canManageTasks 
 }: DashboardProps) {
-    const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
     const page = usePage();
+    
+    // Show pending approval message
+    if (isPending) {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Dashboard - Pending Approval" />
+                <div className="flex h-full flex-1 flex-col items-center justify-center gap-6 p-4 md:p-6">
+                    <div className="max-w-2xl text-center">
+                        <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900">
+                            <Clock className="h-12 w-12 text-yellow-600 dark:text-yellow-300" />
+                        </div>
+                        <h1 className="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
+                            Waiting for Approval
+                        </h1>
+                        <p className="mb-6 text-lg text-gray-600 dark:text-gray-400">
+                            Your request to join <span className="font-semibold text-gray-900 dark:text-white">{teamName}</span> has been sent to the Project Manager.
+                        </p>
+                        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-6 dark:border-yellow-800 dark:bg-yellow-900/20">
+                            <div className="flex items-start gap-3">
+                                <AlertTriangle className="h-6 w-6 flex-shrink-0 text-yellow-600 dark:text-yellow-400" />
+                                <div className="text-left">
+                                    <p className="font-medium text-gray-900 dark:text-white">
+                                        You'll be notified once approved
+                                    </p>
+                                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                                        Once the Project Manager approves your request, you'll gain access to the dashboard and can start working on tasks.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-8">
+                            <Button
+                                variant="outline"
+                                onClick={() => router.reload()}
+                            >
+                                Check Status
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </AppLayout>
+        );
+    }
+    
+    const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
     const flash = page.props.flash as any;
     
     const [showTeamCodeModal, setShowTeamCodeModal] = useState(false);

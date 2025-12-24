@@ -6,15 +6,29 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
+    // If user is authenticated, redirect them appropriately
+    if (Auth::check()) {
+        $user = Auth::user();
+        
+        // If user hasn't selected a role yet, send them to role selection
+        if ($user->role === null || $user->role === '') {
+            return redirect()->route('role-selection.show');
+        }
+        
+        // If user has a role, send them to dashboard
+        return redirect()->route('dashboard');
+    }
+    
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'ensure.role'])->group(function () {
     // Role selection (for new users)
     Route::get('role-selection', [App\Http\Controllers\RoleSelectionController::class, 'show'])->name('role-selection.show');
     Route::post('role-selection', [App\Http\Controllers\RoleSelectionController::class, 'store'])->name('role-selection.store');
+    Route::delete('role-selection/cancel', [App\Http\Controllers\RoleSelectionController::class, 'cancel'])->name('role-selection.cancel');
 
     // Team routes
     Route::get('team/create', [App\Http\Controllers\TeamController::class, 'create'])->name('team.create');

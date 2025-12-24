@@ -42,6 +42,7 @@ class User extends Authenticatable
             self::ROLE_BACKEND_DEVELOPER => 'Backend Developer',
             self::ROLE_TECHNICAL_WRITER => 'Technical Writer',
             self::ROLE_SYSTEM_ANALYST => 'System Analyst',
+            'member_pending_assignment' => 'Team Member',
             default => 'Unknown',
         };
     }
@@ -112,6 +113,7 @@ class User extends Authenticatable
             self::ROLE_BACKEND_DEVELOPER,
             self::ROLE_TECHNICAL_WRITER,
             self::ROLE_SYSTEM_ANALYST,
+            'member_pending_assignment',
         ]);
     }
 

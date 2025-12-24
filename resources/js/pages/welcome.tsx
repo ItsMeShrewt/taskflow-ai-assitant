@@ -2,6 +2,7 @@ import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { CheckCircle2, Users, Zap, Shield, BarChart3, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Welcome({
     canRegister = true,
@@ -59,18 +60,38 @@ export default function Welcome({
 
                 {/* Hero Section */}
                 <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <h1 className="mb-6 text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-7xl dark:text-white">
+                    <motion.div 
+                        className="text-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <motion.h1 
+                            className="mb-6 text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-7xl dark:text-white"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                        >
                             Manage Tasks with
                             <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                                 TaskFlow
                             </span>
-                        </h1>
-                        <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-600 sm:text-xl dark:text-gray-300">
+                        </motion.h1>
+                        <motion.p 
+                            className="mx-auto mb-10 max-w-2xl text-lg text-gray-600 sm:text-xl dark:text-gray-300"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.8, delay: 0.4 }}
+                        >
                             A powerful, role-based task management system designed for teams.
                             Assign tasks, track progress, and boost productivity with real-time updates.
-                        </p>
-                        <div className="flex flex-wrap items-center justify-center gap-4">
+                        </motion.p>
+                        <motion.div 
+                            className="flex flex-wrap items-center justify-center gap-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.6 }}
+                        >
                             {!auth.user && (
                                 <>
                                     {canRegister && (
@@ -89,24 +110,36 @@ export default function Welcome({
                                     </Link>
                                 </>
                             )}
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 </section>
 
                 {/* Features Grid */}
                 <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-                    <div className="mb-16 text-center">
+                    <motion.div 
+                        className="mb-16 text-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
                         <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
                             Everything you need to stay organized
                         </h2>
                         <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
                             Powerful features designed to help your team collaborate and achieve more
                         </p>
-                    </div>
+                    </motion.div>
 
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                         {/* Feature 1 */}
-                        <div className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800">
+                        <motion.div 
+                            className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                        >
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600">
                                 <Users className="h-6 w-6 text-white" />
                             </div>
@@ -116,10 +149,16 @@ export default function Welcome({
                             <p className="text-gray-600 dark:text-gray-300">
                                 Project managers assign tasks to team members. Developers see only their assigned work.
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Feature 2 */}
-                        <div className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800">
+                        <motion.div 
+                            className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                        >
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600">
                                 <Zap className="h-6 w-6 text-white" />
                             </div>
@@ -129,10 +168,16 @@ export default function Welcome({
                             <p className="text-gray-600 dark:text-gray-300">
                                 Smart polling system refreshes only when data changes. Get instant notifications for new tasks.
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Feature 3 */}
-                        <div className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800">
+                        <motion.div 
+                            className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                        >
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-600">
                                 <BarChart3 className="h-6 w-6 text-white" />
                             </div>
@@ -142,10 +187,16 @@ export default function Welcome({
                             <p className="text-gray-600 dark:text-gray-300">
                                 Track completion rates, task status, and priority levels with beautiful visualizations.
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Feature 4 */}
-                        <div className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800">
+                        <motion.div 
+                            className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.4 }}
+                        >
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600">
                                 <CheckCircle2 className="h-6 w-6 text-white" />
                             </div>
@@ -155,10 +206,16 @@ export default function Welcome({
                             <p className="text-gray-600 dark:text-gray-300">
                                 Create, assign, and track tasks with subtasks, priorities, and due dates.
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Feature 5 */}
-                        <div className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800">
+                        <motion.div 
+                            className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.5 }}
+                        >
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600">
                                 <Clock className="h-6 w-6 text-white" />
                             </div>
@@ -168,10 +225,16 @@ export default function Welcome({
                             <p className="text-gray-600 dark:text-gray-300">
                                 Never miss a deadline with upcoming task alerts and overdue notifications.
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Feature 6 */}
-                        <div className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800">
+                        <motion.div 
+                            className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-lg transition-all hover:shadow-2xl hover:scale-105 dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.6 }}
+                        >
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-red-600">
                                 <Shield className="h-6 w-6 text-white" />
                             </div>
@@ -181,14 +244,20 @@ export default function Welcome({
                             <p className="text-gray-600 dark:text-gray-300">
                                 Two-factor authentication and role-based security keep your data safe.
                             </p>
-                        </div>
+                        </motion.div>
                     </div>
                 </section>
 
                 {/* CTA Section */}
                 {!auth.user && (
                     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-                        <div className="rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-600 p-12 shadow-2xl">
+                        <motion.div 
+                            className="rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-600 p-12 shadow-2xl"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                        >
                             <div className="text-center">
                                 <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
                                     Ready to boost your productivity?
@@ -205,7 +274,7 @@ export default function Welcome({
                                     </Link>
                                 )}
                             </div>
-                        </div>
+                        </motion.div>
                     </section>
                 )}
 

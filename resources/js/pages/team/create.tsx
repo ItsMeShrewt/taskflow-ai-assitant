@@ -1,5 +1,5 @@
-import { Head, useForm } from '@inertiajs/react';
-import { Camera } from 'lucide-react';
+import { Head, useForm, router } from '@inertiajs/react';
+import { Camera, ArrowLeft } from 'lucide-react';
 import { FormEvent, ChangeEvent, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,10 @@ export default function CreateTeam() {
         }
     };
 
+    const handleBack = () => {
+        router.visit('/role-selection');
+    };
+
     const submit = (e: FormEvent) => {
         e.preventDefault();
         post('/team/create');
@@ -36,8 +40,21 @@ export default function CreateTeam() {
             <Head title="Create Your Team" />
             
             <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="text-center">
+                <Card className="w-full max-w-md relative">
+                    {/* Back Button */}
+                    <div className="absolute top-4 left-4 z-10">
+                        <Button 
+                            variant="ghost" 
+                            onClick={handleBack}
+                            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                            size="sm"
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            <span>Back</span>
+                        </Button>
+                    </div>
+                    
+                    <CardHeader className="text-center pt-12">
                         <CardTitle className="text-3xl">Create Your Team</CardTitle>
                         <CardDescription className="text-base">
                             Set up your team to start managing projects
