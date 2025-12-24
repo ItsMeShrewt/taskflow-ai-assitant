@@ -60,7 +60,9 @@ class HandleInertiaRequests extends Middleware
             if (session()->has($approvalKey)) {
                 session()->forget($approvalKey);
                 session()->flash('memberApproved', true);
-                session()->flash('teamName', $user->team?->name);
+                if ($user->team) {
+                    session()->flash('teamName', $user->team->name);
+                }
             }
         }
 
@@ -73,6 +75,15 @@ class HandleInertiaRequests extends Middleware
             ],
             'unreadTaskCount' => $unreadTaskCount,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+                'info' => session('info'),
+                'teamCode' => session('teamCode'),
+                'teamName' => session('teamName'),
+                'accountCreated' => session('accountCreated'),
+                'memberApproved' => session('memberApproved'),
+            ],
         ];
     }
 }

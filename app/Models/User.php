@@ -20,6 +20,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $membership_status
  * @property string $created_at
  * @property string $updated_at
+ * @property-read Team|null $team
  */
 class User extends Authenticatable
 {
@@ -143,6 +144,8 @@ class User extends Authenticatable
 
     /**
      * Team this user belongs to
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Team, User>
      */
     public function team()
     {

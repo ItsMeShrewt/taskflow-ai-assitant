@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $code
+ * @property string|null $photo
+ * @property int $created_by
+ * @property string $created_at
+ * @property string $updated_at
+ */
 class Team extends Model
 {
     protected $fillable = [

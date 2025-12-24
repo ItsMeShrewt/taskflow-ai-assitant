@@ -25,6 +25,7 @@ import { format } from 'date-fns';
 import { useAutoRefresh } from '@/hooks/use-auto-refresh';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -138,8 +139,19 @@ export default function Dashboard({
     const [copied, setCopied] = useState(false);
     
     useEffect(() => {
+        console.log('Flash data:', flash);
+        
         if (flash?.teamCode) {
             setShowTeamCodeModal(true);
+        }
+        
+        // Show welcome message for newly created accounts (PM who just created a team)
+        if (flash?.accountCreated && flash?.success) {
+            console.log('Showing welcome toast');
+            toast.success(`🎉 Welcome to TaskFlow! ${flash.success}`, {
+                duration: 5000,
+                position: 'top-center',
+            });
         }
         
         // Show success toast when member is approved
@@ -149,7 +161,15 @@ export default function Dashboard({
                 position: 'top-center',
             });
         }
-    }, [flash?.teamCode, flash?.memberApproved, flash?.teamName]);
+        
+        // Show info message for pending members
+        if (flash?.info && isPending) {
+            toast.loading(flash.info, {
+                duration: 4000,
+                position: 'top-center',
+            });
+        }
+    }, [flash?.teamCode, flash?.memberApproved, flash?.teamName, flash?.accountCreated, flash?.success, flash?.info, isPending]);
     
     const copyCode = () => {
         if (flash?.teamCode) {

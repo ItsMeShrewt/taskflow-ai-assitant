@@ -11,6 +11,7 @@ class RoleSelectionController extends Controller
 {
     public function show()
     {
+        /** @var User $user */
         $user = Auth::user();
         
         // If user already has a role selected and a team, redirect to dashboard

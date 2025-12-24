@@ -48,6 +48,7 @@ class TeamController extends Controller
         // Redirect to dashboard with team code in flash message
         return redirect()->route('dashboard')->with([
             'success' => 'Team created successfully!',
+            'accountCreated' => true,
             'teamCode' => $team->code,
             'teamName' => $team->name,
         ]);
