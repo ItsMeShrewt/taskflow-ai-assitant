@@ -169,4 +169,21 @@ class UpdateCheckController extends Controller
             'has_update' => $hasUpdate
         ]);
     }
+
+    /**
+     * Check if user's membership status has changed
+     */
+    public function checkMembershipStatus(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        
+        // Refresh user data from database
+        $user->refresh();
+        
+        return response()->json([
+            'membership_status' => $user->membership_status,
+            'has_changed' => $request->has('last_status') && $user->membership_status !== $request->get('last_status')
+        ]);
+    }
 }

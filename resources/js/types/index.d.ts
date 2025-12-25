@@ -36,6 +36,7 @@ export interface Team {
     id: number;
     name: string;
     code: string;
+    description: string | null;
     photo: string | null;
 }
 

@@ -1,20 +1,43 @@
-import { Head, useForm, router } from '@inertiajs/react';
-import { Camera, ArrowLeft } from 'lucide-react';
-import { FormEvent, ChangeEvent, useState } from 'react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
+import { Camera, ArrowLeft, Save } from 'lucide-react';
+import { FormEvent, ChangeEvent, useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import toast from 'react-hot-toast';
 
-export default function CreateTeam() {
+interface Team {
+    id: number;
+    name: string;
+    description: string | null;
+    photo: string | null;
+}
+
+interface EditTeamProps {
+    team: Team;
+}
+
+export default function EditTeam({ team }: EditTeamProps) {
+    const page = usePage();
+    const flash = page.props.flash as any;
+    
     const { data, setData, post, processing, errors } = useForm({
-        name: '',
-        description: '',
+        name: team.name,
+        description: team.description || '',
         photo: null as File | null,
     });
     
-    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(
+        team.photo ? `/storage/${team.photo}` : null
+    );
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+    }, [flash]);
 
     const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -29,17 +52,17 @@ export default function CreateTeam() {
     };
 
     const handleBack = () => {
-        router.visit('/role-selection');
+        router.visit('/dashboard');
     };
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
-        post('/team/create');
+        post(`/team/${team.id}`);
     };
 
     return (
         <>
-            <Head title="Create Your Team" />
+            <Head title="Edit Team Settings" />
             
             <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
                 <Card className="w-full max-w-md relative">
@@ -57,9 +80,9 @@ export default function CreateTeam() {
                     </div>
                     
                     <CardHeader className="text-center pt-12">
-                        <CardTitle className="text-3xl">Create Your Team</CardTitle>
+                        <CardTitle className="text-3xl">Team Settings</CardTitle>
                         <CardDescription className="text-base">
-                            Set up your team to start managing projects
+                            Edit your team's information
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -89,10 +112,11 @@ export default function CreateTeam() {
                                         size="sm"
                                         className="absolute bottom-0 right-0"
                                     >
-                                        Upload
+                                        Change
                                     </Button>
                                 </div>
                                 {errors.photo && <p className="text-sm text-red-600 mt-1">{errors.photo}</p>}
+                                <p className="text-xs text-gray-500 mt-2">Only Project Managers can edit team photo</p>
                             </div>
 
                             {/* Team Name */}
@@ -103,7 +127,6 @@ export default function CreateTeam() {
                                     type="text"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
-                                    placeholder="e.g., Development Team Alpha"
                                     className="mt-1"
                                     required
                                 />
@@ -127,11 +150,11 @@ export default function CreateTeam() {
                             {/* Submit Button */}
                             <Button 
                                 type="submit" 
-                                className="w-full bg-blue-600 hover:bg-blue-700"
-                                size="lg"
+                                className="w-full" 
                                 disabled={processing}
                             >
-                                {processing ? 'Creating Team...' : 'Create Team'}
+                                <Save className="w-4 h-4 mr-2" />
+                                {processing ? 'Saving...' : 'Save Changes'}
                             </Button>
                         </form>
                     </CardContent>

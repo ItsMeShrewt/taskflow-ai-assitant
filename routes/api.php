@@ -34,4 +34,5 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('check-updates/dashboard', [UpdateCheckController::class, 'checkDashboardUpdate']);
     Route::get('check-updates/users', [UpdateCheckController::class, 'checkUsersUpdate']);
     Route::get('check-updates/pending-members', [UpdateCheckController::class, 'checkPendingMembersUpdate']);
+    Route::get('check-updates/membership-status', [UpdateCheckController::class, 'checkMembershipStatus']);
 });

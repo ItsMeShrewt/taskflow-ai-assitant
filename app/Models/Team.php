@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $id
  * @property string $name
+ * @property string|null $description
  * @property string $code
  * @property string|null $photo
  * @property int $created_by
@@ -19,6 +20,7 @@ class Team extends Model
 {
     protected $fillable = [
         'name',
+        'description',
         'code',
         'photo',
         'created_by',

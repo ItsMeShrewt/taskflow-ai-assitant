@@ -17,15 +17,17 @@ import {
   Copy,
   Check,
   Users,
-  AlertTriangle
+  AlertTriangle,
+  Settings
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { useAutoRefresh } from '@/hooks/use-auto-refresh';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -88,6 +90,39 @@ export default function Dashboard({
     canManageTasks 
 }: DashboardProps) {
     const page = usePage();
+    const { auth } = page.props as any;
+    const isCheckingRef = useRef(false);
+    
+    // Poll membership status for pending members
+    useEffect(() => {
+        if (!isPending) return;
+
+        const checkMembershipStatus = async () => {
+            if (isCheckingRef.current) return;
+            
+            isCheckingRef.current = true;
+            
+            try {
+                const response = await axios.get('/api/check-updates/membership-status', {
+                    params: { last_status: 'pending' }
+                });
+                
+                if (response.data.has_changed && response.data.membership_status === 'approved') {
+                    // Membership approved! Reload the page
+                    router.reload();
+                }
+            } catch (error) {
+                console.error('Error checking membership status:', error);
+            } finally {
+                isCheckingRef.current = false;
+            }
+        };
+
+        // Check every 3 seconds
+        const interval = setInterval(checkMembershipStatus, 3000);
+        
+        return () => clearInterval(interval);
+    }, [isPending]);
     
     // Show pending approval message
     if (isPending) {
@@ -196,7 +231,6 @@ export default function Dashboard({
         checkInterval: 3000, // Check every 3 seconds
     });
 
-    const { auth } = page.props;
     const userTeam = auth.user?.team;
     const membershipStatus = auth.user?.membership_status;
 
@@ -237,7 +271,8 @@ export default function Dashboard({
                     </div>
                 )}
 
-                {!canManageTasks && membershipStatus === 'approved' && userTeam && (
+                {/* Show welcome banner only for newly approved members (flash message) */}
+                {!canManageTasks && flash?.memberApproved && userTeam && (
                     <div className="rounded-lg border-2 border-green-300 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 dark:border-green-700 p-4 shadow-sm">
                         <div className="flex items-start gap-3">
                             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-gray-900 border-2 border-green-300 dark:border-green-700 overflow-hidden">
@@ -254,6 +289,74 @@ export default function Dashboard({
                                 <p className="text-sm text-green-800 dark:text-green-300">
                                     Your membership has been approved by the Project Manager. You're now part of the team and can view tasks assigned to you.
                                 </p>
+                                {userTeam.description && (
+                                    <p className="text-sm text-green-700 dark:text-green-400 mt-2 italic">
+                                        "{userTeam.description}"
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Team description banner for all approved members (always visible if description exists) */}
+                {!canManageTasks && membershipStatus === 'approved' && !flash?.memberApproved && userTeam?.description && (
+                    <div className="rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 dark:border-blue-700 p-4 shadow-sm">
+                        <div className="flex items-start gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-gray-900 border-2 border-blue-300 dark:border-blue-700 overflow-hidden">
+                                {userTeam.photo ? (
+                                    <img src={`/storage/${userTeam.photo}`} alt={userTeam.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                )}
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-base font-semibold text-blue-900 dark:text-blue-200 mb-1">
+                                    📢 Announcement
+                                </h3>
+                                <p className="text-sm text-blue-700 dark:text-blue-300 italic">
+                                    "{userTeam.description}"
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Team Info Card for Project Managers */}
+                {canManageTasks && userTeam && (
+                    <div className="rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 dark:border-blue-700 p-4 shadow-sm">
+                        <div className="flex items-start gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-gray-900 border-2 border-blue-300 dark:border-blue-700 overflow-hidden">
+                                {userTeam.photo ? (
+                                    <img src={`/storage/${userTeam.photo}`} alt={userTeam.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                )}
+                            </div>
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-base font-semibold text-blue-900 dark:text-blue-200">
+                                        {userTeam.name}
+                                    </h3>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm"
+                                        onClick={() => router.visit(`/team/${userTeam.id}/edit`)}
+                                        className="text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                                    >
+                                        <Settings className="h-4 w-4 mr-1" />
+                                        Edit
+                                    </Button>
+                                </div>
+                                {userTeam.description ? (
+                                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-1 italic">
+                                        "{userTeam.description}"
+                                    </p>
+                                ) : (
+                                    <p className="text-sm text-blue-600/70 dark:text-blue-400/70 mt-1">
+                                        Add a team description to let members know your team's goals and mission.
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

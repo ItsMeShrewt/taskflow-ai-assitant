@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class TeamController extends Controller
@@ -20,6 +21,7 @@ class TeamController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
             'photo' => 'nullable|image|max:2048',
         ]);
 
@@ -30,6 +32,7 @@ class TeamController extends Controller
 
         $team = Team::create([
             'name' => $request->name,
+            'description' => $request->description,
             'code' => Team::generateUniqueCode(),
             'photo' => $photoPath,
             'created_by' => Auth::id(),
@@ -145,5 +148,48 @@ class TeamController extends Controller
         ]);
 
         return back()->with('success', 'Member rejected successfully!');
+    }
+
+    public function edit($id)
+    {
+        $team = Team::findOrFail($id);
+        
+        Gate::authorize('update', $team);
+
+        return Inertia::render('team/edit', [
+            'team' => $team,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $team = Team::findOrFail($id);
+        
+        Gate::authorize('update', $team);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'photo' => 'nullable|image|max:2048',
+        ]);
+
+        $data = [
+            'name' => $request->name,
+            'description' => $request->description,
+        ];
+
+        // Handle photo update
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($team->photo) {
+                Storage::disk('public')->delete($team->photo);
+            }
+            
+            $data['photo'] = $request->file('photo')->store('teams', 'public');
+        }
+
+        $team->update($data);
+
+        return redirect()->route('team.edit', $team->id)->with('success', 'Team updated successfully!');
     }
 }

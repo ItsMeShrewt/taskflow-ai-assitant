@@ -15,7 +15,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage, router } from '@inertiajs/react';
-import { LayoutGrid, CheckSquare, Users, UserCheck } from 'lucide-react';
+import { LayoutGrid, CheckSquare, Users, UserCheck, Settings } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import AppLogo from './app-logo';
 import axios from 'axios';
@@ -155,6 +155,15 @@ export function AppSidebar() {
                                             </>
                                         )}
                                     </div>
+                                    {isProjectManager && (
+                                        <Link 
+                                            href={`/team/${userTeam.id}/edit`}
+                                            className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-sidebar-accent transition-colors"
+                                            title="Team Settings"
+                                        >
+                                            <Settings className="h-3.5 w-3.5 text-sidebar-foreground/70" />
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         </SidebarGroupContent>

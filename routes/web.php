@@ -38,6 +38,8 @@ Route::middleware(['auth', 'verified', 'ensure.role'])->group(function () {
     Route::get('team/pending-members', [App\Http\Controllers\TeamController::class, 'pendingMembers'])->name('team.pending-members');
     Route::post('team/approve/{userId}', [App\Http\Controllers\TeamController::class, 'approveMember'])->name('team.approve-member');
     Route::post('team/reject/{userId}', [App\Http\Controllers\TeamController::class, 'rejectMember'])->name('team.reject-member');
+    Route::get('team/{id}/edit', [App\Http\Controllers\TeamController::class, 'edit'])->name('team.edit');
+    Route::post('team/{id}', [App\Http\Controllers\TeamController::class, 'update'])->name('team.update');
 
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 

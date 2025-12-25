@@ -53,7 +53,7 @@ class HandleInertiaRequests extends Middleware
 
         // Load team relationship if user exists
         if ($user) {
-            $user->load('team:id,name,code,photo');
+            $user->load('team:id,name,code,description,photo');
             
             // Check if user was recently approved
             $approvalKey = "member_{$user->id}_approved";
