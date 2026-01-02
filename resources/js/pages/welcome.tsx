@@ -1,8 +1,9 @@
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { CheckCircle2, Users, Zap, Shield, BarChart3, Clock } from 'lucide-react';
+import { CheckCircle2, Users, Zap, Shield, BarChart3, Clock, Star, TrendingUp, Target, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export default function Welcome({
     canRegister = true,
@@ -10,6 +11,33 @@ export default function Welcome({
     canRegister?: boolean;
 }) {
     const { auth } = usePage<SharedData>().props;
+    
+    // Animated counter for stats
+    const [stats, setStats] = useState({ users: 0, tasks: 0, teams: 0, completion: 0 });
+    
+    useEffect(() => {
+        const targets = { users: 2500, tasks: 15000, teams: 350, completion: 98 };
+        const duration = 2000;
+        const steps = 60;
+        const interval = duration / steps;
+        
+        let step = 0;
+        const timer = setInterval(() => {
+            step++;
+            const progress = step / steps;
+            
+            setStats({
+                users: Math.floor(targets.users * progress),
+                tasks: Math.floor(targets.tasks * progress),
+                teams: Math.floor(targets.teams * progress),
+                completion: Math.floor(targets.completion * progress),
+            });
+            
+            if (step >= steps) clearInterval(timer);
+        }, interval);
+        
+        return () => clearInterval(timer);
+    }, []);
 
     return (
         <>
@@ -244,6 +272,254 @@ export default function Welcome({
                             <p className="text-gray-600 dark:text-gray-300">
                                 Two-factor authentication and role-based security keep your data safe.
                             </p>
+                        </motion.div>
+                    </div>
+                </section>
+
+                {/* Stats Section */}
+                <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+                    <motion.div 
+                        className="rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-12 shadow-2xl"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <div className="grid gap-8 md:grid-cols-4">
+                            <div className="text-center">
+                                <motion.div 
+                                    className="mb-2 text-5xl font-bold text-white"
+                                    initial={{ scale: 0 }}
+                                    whileInView={{ scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                >
+                                    {stats.users.toLocaleString()}+
+                                </motion.div>
+                                <div className="text-blue-100">Active Users</div>
+                            </div>
+                            <div className="text-center">
+                                <motion.div 
+                                    className="mb-2 text-5xl font-bold text-white"
+                                    initial={{ scale: 0 }}
+                                    whileInView={{ scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.3 }}
+                                >
+                                    {stats.tasks.toLocaleString()}+
+                                </motion.div>
+                                <div className="text-blue-100">Tasks Completed</div>
+                            </div>
+                            <div className="text-center">
+                                <motion.div 
+                                    className="mb-2 text-5xl font-bold text-white"
+                                    initial={{ scale: 0 }}
+                                    whileInView={{ scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.4 }}
+                                >
+                                    {stats.teams.toLocaleString()}+
+                                </motion.div>
+                                <div className="text-blue-100">Teams Powered</div>
+                            </div>
+                            <div className="text-center">
+                                <motion.div 
+                                    className="mb-2 text-5xl font-bold text-white"
+                                    initial={{ scale: 0 }}
+                                    whileInView={{ scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: 0.5 }}
+                                >
+                                    {stats.completion}%
+                                </motion.div>
+                                <div className="text-blue-100">Satisfaction Rate</div>
+                            </div>
+                        </div>
+                    </motion.div>
+                </section>
+
+                {/* Testimonials Section */}
+                <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+                    <motion.div 
+                        className="mb-16 text-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
+                            Loved by teams worldwide
+                        </h2>
+                        <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+                            See what our users have to say about TaskFlow
+                        </p>
+                    </motion.div>
+
+                    <div className="grid gap-8 md:grid-cols-3">
+                        <motion.div 
+                            className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                        >
+                            <div className="mb-4 flex gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                                ))}
+                            </div>
+                            <p className="mb-4 text-gray-700 dark:text-gray-300">
+                                "TaskFlow transformed how our development team collaborates. The role-based system is exactly what we needed!"
+                            </p>
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold">
+                                    JS
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-gray-900 dark:text-white">John Smith</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">Tech Lead at StartupCo</div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div 
+                            className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                        >
+                            <div className="mb-4 flex gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                                ))}
+                            </div>
+                            <p className="mb-4 text-gray-700 dark:text-gray-300">
+                                "The real-time updates and analytics dashboard help us stay on track. Best task manager we've used!"
+                            </p>
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-semibold">
+                                    SD
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-gray-900 dark:text-white">Sarah Davis</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">Project Manager at TechCorp</div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div 
+                            className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                        >
+                            <div className="mb-4 flex gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                                ))}
+                            </div>
+                            <p className="mb-4 text-gray-700 dark:text-gray-300">
+                                "Intuitive interface, powerful features. TaskFlow helped us increase productivity by 40%!"
+                            </p>
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-teal-500 text-white font-semibold">
+                                    MJ
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-gray-900 dark:text-white">Michael Johnson</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">CEO at InnovateLab</div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </section>
+
+                {/* Why Choose Us Section */}
+                <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+                    <div className="grid gap-12 lg:grid-cols-2 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <h2 className="mb-6 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
+                                Why teams choose TaskFlow
+                            </h2>
+                            <div className="space-y-6">
+                                <div className="flex gap-4">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
+                                        <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                    </div>
+                                    <div>
+                                        <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+                                            Boost Productivity
+                                        </h3>
+                                        <p className="text-gray-600 dark:text-gray-300">
+                                            Streamlined workflows and automated notifications keep your team focused on what matters most.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900">
+                                        <Target className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                                    </div>
+                                    <div>
+                                        <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+                                            Stay Organized
+                                        </h3>
+                                        <p className="text-gray-600 dark:text-gray-300">
+                                            Prioritize tasks, set deadlines, and track progress with our intuitive interface.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900">
+                                        <Award className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                                    </div>
+                                    <div>
+                                        <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+                                            Achieve More Together
+                                        </h3>
+                                        <p className="text-gray-600 dark:text-gray-300">
+                                            Collaborate seamlessly with team members and celebrate milestones together.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            className="rounded-3xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 p-12 shadow-2xl"
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <div className="space-y-6 text-white">
+                                <div className="flex items-center gap-4">
+                                    <CheckCircle2 className="h-8 w-8 shrink-0" />
+                                    <span className="text-lg">Easy to set up in minutes</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <CheckCircle2 className="h-8 w-8 shrink-0" />
+                                    <span className="text-lg">No credit card required</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <CheckCircle2 className="h-8 w-8 shrink-0" />
+                                    <span className="text-lg">24/7 customer support</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <CheckCircle2 className="h-8 w-8 shrink-0" />
+                                    <span className="text-lg">Regular updates & improvements</span>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <CheckCircle2 className="h-8 w-8 shrink-0" />
+                                    <span className="text-lg">Secure & GDPR compliant</span>
+                                </div>
+                            </div>
                         </motion.div>
                     </div>
                 </section>
