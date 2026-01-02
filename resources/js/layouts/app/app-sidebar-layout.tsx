@@ -3,7 +3,6 @@ import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import { AlertProvider } from '@/components/alert-provider';
-import ChatlingWidget from '@/components/chatling-widget';
 import { type BreadcrumbItem } from '@/types';
 import { type PropsWithChildren } from 'react';
 
@@ -18,7 +17,6 @@ export default function AppSidebarLayout({
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 {children}
             </AppContent>
-            <ChatlingWidget />
             <AlertProvider />
         </AppShell>
     );

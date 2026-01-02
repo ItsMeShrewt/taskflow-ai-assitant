@@ -1,0 +1,36 @@
+# Simple & Fast Dockerfile - Uses local build
+FROM php:8.3-fpm-alpine
+
+# Install system dependencies
+RUN apk add --no-cache \
+    nginx \
+    supervisor \
+    mysql-client
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy nginx configuration
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+
+# Copy supervisor configuration
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Copy entrypoint script
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Create required directories
+RUN mkdir -p /var/log/supervisor /run/nginx
+
+# Expose port
+EXPOSE 80
+
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Start supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

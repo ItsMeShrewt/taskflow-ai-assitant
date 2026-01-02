@@ -11,30 +11,42 @@ export default function ChatlingWidget() {
     console.log('ChatlingWidget - Current component:', component);
     console.log('ChatlingWidget - User authenticated:', !!auth?.user);
     
+    // Cleanup function to remove script and widget
+    const cleanup = () => {
+      const existingScript = document.getElementById('chtl-script');
+      if (existingScript) {
+        existingScript.remove();
+      }
+      // Also remove the chatbot widget if it exists
+      const chatWidget = document.querySelector('[data-chatling-widget]');
+      if (chatWidget) {
+        chatWidget.remove();
+      }
+      // Clear the window config
+      delete (window as any).chtlConfig;
+    };
+    
     // Don't show widget if user is not authenticated
     if (!auth?.user) {
       console.log('ChatlingWidget - User not authenticated, hiding widget');
+      cleanup(); // Clean up any existing widget
       return;
     }
     
-    // Pages where chatbot should NOT appear (even for authenticated users)
-    const excludedPages = [
-      'welcome',
-      'auth/login',
-      'auth/register',
-      'auth/forgot-password',
-      'auth/reset-password',
-      'auth/verify-email',
-      'auth/two-factor-challenge',
-      'auth/confirm-password',
-      'role-selection',
+    // Pages where chatbot SHOULD appear (whitelist approach)
+    const allowedPages = [
+      'tasks/index',
+      'tasks/show',
+      'tasks/create',
+      'tasks/edit',
     ];
 
-    // Check if current page is excluded
-    const shouldHide = excludedPages.includes(component as string);
-    console.log('ChatlingWidget - Should hide:', shouldHide);
+    // Check if current page is in the allowed list
+    const shouldShow = allowedPages.includes(component as string);
+    console.log('ChatlingWidget - Should show:', shouldShow);
 
-    if (shouldHide) {
+    if (!shouldShow) {
+      cleanup(); // Clean up any existing widget
       return;
     }
 
@@ -61,18 +73,8 @@ export default function ChatlingWidget() {
     
     document.body.appendChild(script);
 
-    // Cleanup function to remove script when component unmounts
-    return () => {
-      const existingScript = document.getElementById('chtl-script');
-      if (existingScript) {
-        existingScript.remove();
-      }
-      // Also remove the chatbot widget if it exists
-      const chatWidget = document.querySelector('[data-chatling-widget]');
-      if (chatWidget) {
-        chatWidget.remove();
-      }
-    };
+    // Return cleanup function
+    return cleanup;
   }, [component, auth?.user]);
 
   return null;

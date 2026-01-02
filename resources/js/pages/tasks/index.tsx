@@ -11,6 +11,7 @@ import { Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import axios from 'axios';
+import ChatlingWidget from '@/components/chatling-widget';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -210,6 +211,7 @@ export default function TasksPage() {
           </DialogContent>
         </Dialog>
       </div>
+      <ChatlingWidget />
     </AppLayout>
   );
 }
