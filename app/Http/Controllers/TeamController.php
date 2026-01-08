@@ -28,7 +28,15 @@ class TeamController extends Controller
         $photoPath = null;
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('teams', 'public');
+            \Log::info('Team photo uploaded', ['path' => $photoPath]);
         }
+
+        \Log::info('Creating team with data', [
+            'name' => $request->name,
+            'description' => $request->description,
+            'photo' => $photoPath,
+            'created_by' => Auth::id(),
+        ]);
 
         $team = Team::create([
             'name' => $request->name,
@@ -37,6 +45,8 @@ class TeamController extends Controller
             'photo' => $photoPath,
             'created_by' => Auth::id(),
         ]);
+
+        \Log::info('Team created', ['id' => $team->id, 'photo' => $team->photo]);
 
         // Update user's team and set as approved
         /** @var User $user */
