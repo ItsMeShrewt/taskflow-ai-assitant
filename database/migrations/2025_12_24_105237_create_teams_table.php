@@ -22,8 +22,11 @@ return new class extends Migration
         
         // Add team_id and membership_status to users table
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('team_id')->nullable()->constrained()->onDelete('set null');
+            $table->unsignedBigInteger('team_id')->nullable();
             $table->enum('membership_status', ['pending', 'approved', 'rejected'])->nullable();
+            
+            // Add foreign key constraint
+            $table->foreign('team_id')->references('id')->on('teams')->onDelete('set null');
         });
     }
 

@@ -16,7 +16,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8000:80"
+      - "8001:80"
     environment:
       - APP_NAME="Smart Todo List"
       - APP_ENV=local

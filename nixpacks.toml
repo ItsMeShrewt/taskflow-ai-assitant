@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ['php83', 'php83Packages.composer', 'nodejs_20']
+nixPkgs = ['php83', 'php83Extensions.pdo', 'php83Extensions.pdo_sqlite', 'php83Extensions.sqlite3', 'php83Packages.composer', 'nodejs_20']
 aptPkgs = ['sqlite3', 'libsqlite3-dev']
 
 [phases.install]
