@@ -4,15 +4,17 @@ aptPkgs = ['sqlite3', 'libsqlite3-dev']
 
 [phases.install]
 cmds = [
-    'composer install --no-dev --optimize-autoloader --no-interaction',
+    'composer install --no-dev --optimize-autoloader --no-interaction --no-scripts',
     'npm ci --legacy-peer-deps || npm install --legacy-peer-deps',
     'npm run build'
 ]
 
 [phases.build]
 cmds = [
-    'mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache',
-    'chmod -R 777 storage bootstrap/cache'
+    'mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache database',
+    'chmod -R 777 storage bootstrap/cache database',
+    'touch database/database.sqlite',
+    'chmod 666 database/database.sqlite'
 ]
 
 [start]

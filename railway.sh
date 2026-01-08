@@ -9,36 +9,60 @@ echo "PORT: $PORT"
 echo "Date: $(date)"
 echo "-----------------------------------------"
 
-# Override database settings for Railway
+# CRITICAL: Unset DATABASE_URL if Railway provides one
+unset DATABASE_URL
+
+# Force SQLite configuration BEFORE any Laravel commands
 export DB_CONNECTION=sqlite
+export DB_DATABASE=/app/database/database.sqlite
 export SESSION_DRIVER=file
 export CACHE_STORE=file
 export QUEUE_CONNECTION=sync
 
+# Create database directory with full path
+mkdir -p /app/database
+mkdir -p /app/storage/framework/{cache/data,sessions,views}
+mkdir -p /app/storage/logs
+mkdir -p /app/bootstrap/cache
+
 echo "Setting up storage directories..."
-mkdir -p storage/framework/{cache/data,sessions,views}
-mkdir -p storage/logs
-mkdir -p database
+echo "Setting up storage directories..."
 chmod -R 777 storage bootstrap/cache database
 
-# Create SQLite database file
+# Create SQLite database file with absolute path
 echo "Creating SQLite database..."
-touch database/database.sqlite
-chmod 666 database/database.sqlite
+touch /app/database/database.sqlite
+chmod 666 /app/database/database.sqlite
+
+# Create relative symlink for Laravel
+if [ ! -f database/database.sqlite ]; then
+    ln -sf /app/database/database.sqlite database/database.sqlite
+fi
 
 # Verify database file was created
-if [ ! -f database/database.sqlite ]; then
+if [ ! -f /app/database/database.sqlite ]; then
     echo "❌ Failed to create database file!"
     exit 1
 fi
 
-echo "✅ Database file created: $(ls -lh database/database.sqlite)"
+echo "✅ Database file created: $(ls -lh /app/database/database.sqlite)"
+
+# Show current database configuration
+echo "Database configuration:"
+echo "  DB_CONNECTION: $DB_CONNECTION"
+echo "  DB_DATABASE: $DB_DATABASE"
 
 echo "Clearing all caches..."
-php artisan cache:clear || true
 php artisan config:clear || true
+php artisan cache:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
+
+# Verify environment is set correctly
+echo "Verifying SQLite configuration..."
+php -r "echo 'PHP PDO SQLite: ' . (extension_loaded('pdo_sqlite') ? 'Loaded' : 'NOT LOADED') . PHP_EOL;"
+php artisan env | grep DB_ || echo "DB env vars:"
+env | grep DB_
 
 echo "Creating storage link..."
 php artisan storage:link || true
