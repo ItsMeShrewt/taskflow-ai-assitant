@@ -52,6 +52,15 @@ echo "🔐 Setting permissions..."
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
+# Create nginx temp directories and set permissions
+mkdir -p /var/lib/nginx/tmp/client_body \
+         /var/lib/nginx/tmp/proxy \
+         /var/lib/nginx/tmp/fastcgi \
+         /var/lib/nginx/tmp/uwsgi \
+         /var/lib/nginx/tmp/scgi
+chown -R www-data:www-data /var/lib/nginx/tmp
+chmod -R 775 /var/lib/nginx/tmp
+
 echo "✨ Application setup complete!"
 echo "🌐 Application is ready at http://localhost:8000"
 
