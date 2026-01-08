@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ['php83', 'php83Packages.composer', 'nodejs_20']
+nixPkgs = ['php83', 'php83Packages.composer', 'nodejs_20', 'nginx']
 
 [phases.install]
 cmds = [
@@ -10,11 +10,10 @@ cmds = [
 
 [phases.build]
 cmds = [
-    'php artisan storage:link || true',
-    'php artisan config:cache',
-    'php artisan route:cache',
-    'php artisan view:cache'
+    'mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs',
+    'chmod -R 775 storage bootstrap/cache',
+    'php artisan storage:link || true'
 ]
 
 [start]
-cmd = 'php artisan migrate --force && php artisan optimize && php -S 0.0.0.0:$PORT -t public'
+cmd = 'bash railway.sh'
