@@ -1,5 +1,6 @@
 [phases.setup]
 nixPkgs = ['php83', 'php83Packages.composer', 'nodejs_20']
+aptPkgs = ['sqlite3', 'libsqlite3-dev']
 
 [phases.install]
 cmds = [
