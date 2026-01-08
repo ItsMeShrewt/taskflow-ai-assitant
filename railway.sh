@@ -43,36 +43,31 @@ php artisan view:clear || true
 echo "Creating storage link..."
 php artisan storage:link || true
 
+# Generate app key if not set
+if ! grep -q "APP_KEY=base64:" .env 2>/dev/null; then
+    echo "Generating application key..."
+    php artisan key:generate --force --no-interaction
+fi
+
 echo "Running migrations..."
-php artisan migrate --force --no-interaction
+php artisan migrate --force --no-interaction 2>&1
 
 if [ $? -ne 0 ]; then
     echo "❌ Migration failed! Checking database..."
     ls -la database/
-    php artisan migrate:status || true
     exit 1
 fi
 
 echo "✅ Migrations completed successfully"
 
-# Verify database connection and migrations
-echo "Verifying database setup..."
-php artisan migrate:status
-
-if [ $? -ne 0 ]; then
-    echo "❌ Database verification failed!"
-    exit 1
-fi
-
-# Test database connection
-echo "Testing database connection..."
-php artisan tinker --execute="echo 'DB Connected: ' . (DB::connection()->getPdo() ? 'Yes' : 'No') . PHP_EOL;"
-
 echo "Optimizing..."
-php artisan config:cache || true
-php artisan route:cache || true
-php artisan view:cache || true
+php artisan config:cache 2>&1
+php artisan route:cache 2>&1
 
 echo "✅ Application ready!"
 echo "Starting PHP built-in server on 0.0.0.0:$PORT..."
-exec php -S 0.0.0.0:$PORT -t public
+echo "Server will be available at http://localhost:$PORT"
+echo "========================================="
+
+# Start the server with verbose output
+php -S 0.0.0.0:$PORT -t public
