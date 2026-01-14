@@ -26,9 +26,15 @@ class TeamController extends Controller
         ]);
 
         $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('teams', 'public');
-            \Log::info('Team photo uploaded', ['path' => $photoPath]);
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            try {
+                $file = $request->file('photo');
+                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                $photoPath = $file->storeAs('teams', $filename, 'public');
+                \Log::info('Team photo uploaded', ['path' => $photoPath, 'filename' => $filename]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to upload team photo', ['error' => $e->getMessage()]);
+            }
         }
 
         \Log::info('Creating team with data', [
@@ -189,13 +195,19 @@ class TeamController extends Controller
         ];
 
         // Handle photo update
-        if ($request->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($team->photo) {
-                Storage::disk('public')->delete($team->photo);
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            try {
+                // Delete old photo if exists
+                if ($team->photo) {
+                    Storage::disk('public')->delete($team->photo);
+                }
+                
+                $file = $request->file('photo');
+                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                $data['photo'] = $file->storeAs('teams', $filename, 'public');
+            } catch (\Exception $e) {
+                \Log::error('Failed to upload team photo', ['error' => $e->getMessage()]);
             }
-            
-            $data['photo'] = $request->file('photo')->store('teams', 'public');
         }
 
         $team->update($data);
