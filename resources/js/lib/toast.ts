@@ -1,11 +1,8 @@
 import toast from 'react-hot-toast';
-import { CheckCircle, XCircle, Info, AlertTriangle, Trash2, Plus, Edit, Users } from 'lucide-react';
-import { createElement } from 'react';
 
 // Custom toast configurations for different types
 const toastConfig = {
     success: {
-        icon: CheckCircle,
         style: {
             border: '2px solid #10b981',
             padding: '16px',
@@ -19,7 +16,6 @@ const toastConfig = {
         duration: 4000,
     },
     error: {
-        icon: XCircle,
         style: {
             border: '2px solid #ef4444',
             padding: '16px',
@@ -33,7 +29,6 @@ const toastConfig = {
         duration: 5000,
     },
     info: {
-        icon: Info,
         style: {
             border: '2px solid #3b82f6',
             padding: '16px',
@@ -47,7 +42,6 @@ const toastConfig = {
         duration: 4000,
     },
     warning: {
-        icon: AlertTriangle,
         style: {
             border: '2px solid #f59e0b',
             padding: '16px',
@@ -150,8 +144,14 @@ export const showToast = {
             success: messages.success,
             error: messages.error,
         }, {
-            success: toastConfig.success,
-            error: toastConfig.error,
+            success: {
+                style: toastConfig.success.style,
+                duration: toastConfig.success.duration,
+            },
+            error: {
+                style: toastConfig.error.style,
+                duration: toastConfig.error.duration,
+            },
         });
     },
 
@@ -177,13 +177,13 @@ export const showToast = {
             });
         },
         memberRejected: (name: string) => {
-            toast.info(`${name} has been rejected from the team`, {
+            toast(`${name} has been rejected from the team`, {
                 ...toastConfig.info,
                 icon: '❌',
             });
         },
         joinRequest: (teamName: string) => {
-            toast.info(`Your request to join ${teamName} has been sent! ⏳`, {
+            toast(`Your request to join ${teamName} has been sent! ⏳`, {
                 ...toastConfig.info,
                 icon: '📤',
             });
