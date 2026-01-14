@@ -9,7 +9,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, Calendar, Clock, Eye, ListTodo, User as UserIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUpDown, Calendar, Clock, Eye, ListTodo, User as UserIcon, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,9 +21,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { format } from 'date-fns';
 import { usePage } from '@inertiajs/react';
 import { SharedData } from '@/types/index.d';
+import { taskService } from '@/services/taskService';
+import showToast from '@/lib/toast';
 
 interface Props {
   tasks: Task[];
@@ -48,6 +61,18 @@ export default function TaskTable({ tasks, onTaskClick }: Props) {
   const { auth } = usePage<SharedData>().props;
   const canManageTasks = auth.user.role === 'superadmin' || auth.user.role === 'project_manager';
   const [sorting, setSorting] = useState<SortingState>([]);
+
+  const handleDelete = async (taskId: number) => {
+    try {
+      await taskService.deleteTask(taskId);
+      showToast.task.deleted();
+      // Refresh the page to update task list
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      showToast.error('Failed to delete task.');
+    }
+  };
 
   const columns = useMemo<ColumnDef<Task>[]>(
     () => [
@@ -222,14 +247,47 @@ export default function TaskTable({ tasks, onTaskClick }: Props) {
         cell: ({ row }) => {
           const task = row.original;
           return (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onTaskClick(task)}
-              className="h-8 w-8 p-0"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onTaskClick(task)}
+                className="h-8 w-8 p-0"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => e.stopPropagation()}
+                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white dark:bg-gray-800" onClick={(e) => e.stopPropagation()}>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-gray-900 dark:text-white">Delete Task</AlertDialogTitle>
+                    <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                      Are you sure you want to delete this task? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handleDelete(task.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white dark:bg-red-600 dark:hover:bg-red-700"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           );
         },
       },

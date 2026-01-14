@@ -4,10 +4,21 @@ import { taskService } from '@/services/taskService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import TaskForm from './TaskForm';
-import { Pencil, Calendar, Clock, AlertCircle } from 'lucide-react';
+import { Pencil, Calendar, Clock, AlertCircle, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import showToast from '@/lib/toast';
+import { router } from '@inertiajs/react';
 
 interface Props {
   task: Task;
@@ -30,6 +41,7 @@ const statusColors = {
 
 export default function TaskDetail({ task, onUpdate }: Props) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleUpdate = async (data: any) => {
     try {
@@ -58,6 +70,17 @@ export default function TaskDetail({ task, onUpdate }: Props) {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await taskService.deleteTask(task.id);
+      showToast.task.deleted();
+      router.visit('/tasks');
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      showToast.error('Failed to delete task.');
+    }
+  };
+
   return (
     <>
       <div className="rounded-lg border bg-white p-6 dark:bg-gray-800 dark:border-gray-700">
@@ -65,10 +88,16 @@ export default function TaskDetail({ task, onUpdate }: Props) {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {task.title}
           </h1>
-          <Button size="sm" variant="outline" onClick={() => setIsEditDialogOpen(true)} className="gap-2">
-            <Pencil className="h-4 w-4" />
-            Edit
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setIsEditDialogOpen(true)} className="gap-2">
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => setIsDeleteDialogOpen(true)} className="gap-2">
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
+          </div>
         </div>
 
         <div className="mb-4 flex flex-wrap gap-2">

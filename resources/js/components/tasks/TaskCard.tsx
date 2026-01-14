@@ -2,6 +2,17 @@ import { Task } from '@/types/task';
 import { taskService } from '@/services/taskService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Calendar, Clock, Trash2, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import showToast from '@/lib/toast';
@@ -29,15 +40,13 @@ const statusColors = {
 export default function TaskCard({ task, onClick, onUpdate }: Props) {
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this task?')) {
-      try {
-        await taskService.deleteTask(task.id);
-        showToast.task.deleted();
-        onUpdate();
-      } catch (error) {
-        console.error('Failed to delete task:', error);
-        showToast.error('Failed to delete task.');
-      }
+    try {
+      await taskService.deleteTask(task.id);
+      showToast.task.deleted();
+      onUpdate();
+    } catch (error) {
+      console.error('Failed to delete task:', error);
+      showToast.error('Failed to delete task.');
     }
   };
 
@@ -81,14 +90,37 @@ export default function TaskCard({ task, onClick, onUpdate }: Props) {
               className={`h-4 w-4 ${task.status === 'completed' ? 'text-green-600' : 'text-gray-400'}`}
             />
           </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={handleDelete}
-            className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={(e) => e.stopPropagation()}
+                className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-white dark:bg-gray-800">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-gray-900 dark:text-white">Delete Task</AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                  Are you sure you want to delete this task? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-red-600 hover:bg-red-700 text-white dark:bg-red-600 dark:hover:bg-red-700"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
