@@ -20,6 +20,7 @@ export default function Register() {
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
+                onSuccess={() => sessionStorage.setItem('showLoadingScreen', 'true')}
                 disableWhileProcessing
                 className="flex flex-col gap-6"
             >

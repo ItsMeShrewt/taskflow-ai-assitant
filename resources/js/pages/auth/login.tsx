@@ -32,6 +32,7 @@ export default function Login({
             <Form
                 {...store.form()}
                 resetOnSuccess={['password']}
+                onSuccess={() => sessionStorage.setItem('showLoadingScreen', 'true')}
                 className="flex flex-col gap-6"
             >
                 {({ processing, errors }) => (

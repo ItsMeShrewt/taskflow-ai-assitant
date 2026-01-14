@@ -29,6 +29,7 @@ import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import showToast from '@/lib/toast';
 import axios from 'axios';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -173,9 +174,22 @@ export default function Dashboard({
     
     const [showTeamCodeModal, setShowTeamCodeModal] = useState(false);
     const [copied, setCopied] = useState(false);
+    // Check sessionStorage immediately on component initialization
+    const [showLoadingScreen, setShowLoadingScreen] = useState(() => {
+        const shouldShow = sessionStorage.getItem('showLoadingScreen') === 'true';
+        if (shouldShow) {
+            sessionStorage.removeItem('showLoadingScreen');
+        }
+        return shouldShow;
+    });
     
     useEffect(() => {
         console.log('Flash data:', flash);
+        
+        // Show loading screen for newly approved members or account creation
+        if (flash?.accountCreated || flash?.memberApproved) {
+            setShowLoadingScreen(true);
+        }
         
         if (flash?.teamCode) {
             setShowTeamCodeModal(true);
@@ -248,6 +262,11 @@ export default function Dashboard({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
+            
+            {showLoadingScreen && (
+                <LoadingScreen onLoadingComplete={() => setShowLoadingScreen(false)} />
+            )}
+            
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
