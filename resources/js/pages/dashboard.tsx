@@ -334,27 +334,16 @@ export default function Dashboard({
                                 )}
                             </div>
                             <div className="flex-1">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-base font-semibold text-blue-900 dark:text-blue-200">
-                                        {userTeam.name}
-                                    </h3>
-                                    <Button 
-                                        variant="ghost" 
-                                        size="sm"
-                                        onClick={() => router.visit(`/team/${userTeam.id}/edit`)}
-                                        className="text-blue-600 hover:text-blue-700 dark:text-blue-400"
-                                    >
-                                        <Settings className="h-4 w-4 mr-1" />
-                                        Edit
-                                    </Button>
-                                </div>
+                                <h3 className="text-base font-semibold text-blue-900 dark:text-blue-200">
+                                    {userTeam.name}
+                                </h3>
                                 {userTeam.description ? (
                                     <p className="text-sm text-blue-700 dark:text-blue-300 mt-1 italic">
                                         "{userTeam.description}"
                                     </p>
                                 ) : (
                                     <p className="text-sm text-blue-600/70 dark:text-blue-400/70 mt-1">
-                                        Add a team description to let members know your team's goals and mission.
+                                        Add a team's goal to let members know your team's mission.
                                     </p>
                                 )}
                             </div>

@@ -124,7 +124,7 @@ export default function EditTeam({ team }: EditTeamProps) {
                                     <CardHeader>
                                         <CardTitle>Basic Information</CardTitle>
                                         <CardDescription>
-                                            Update your team's name and description
+                                            Update your team's name and goal
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
@@ -149,18 +149,18 @@ export default function EditTeam({ team }: EditTeamProps) {
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="description" className="text-base font-medium">
-                                                    Team Description
+                                                    Team's Goal
                                                 </Label>
                                                 <Textarea
                                                     id="description"
                                                     value={data.description}
                                                     onChange={(e) => setData('description', e.target.value)}
-                                                    placeholder="Describe what your team does..."
+                                                    placeholder="What is your team's mission and goal?"
                                                     className="mt-1 min-h-[120px]"
                                                     rows={5}
                                                 />
                                                 <p className="text-xs text-gray-500">
-                                                    Brief description of your team's purpose and goals
+                                                    Define your team's mission and objectives
                                                 </p>
                                                 {errors.description && (
                                                     <p className="text-sm text-red-600">{errors.description}</p>

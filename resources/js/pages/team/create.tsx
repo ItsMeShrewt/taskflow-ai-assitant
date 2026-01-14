@@ -110,14 +110,14 @@ export default function CreateTeam() {
                                 {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
                             </div>
 
-                            {/* Team Description */}
+                            {/* Team's Goal */}
                             <div>
-                                <Label htmlFor="description">Team Description</Label>
+                                <Label htmlFor="description">Team's Goal</Label>
                                 <Textarea
                                     id="description"
                                     value={data.description}
                                     onChange={(e) => setData('description', e.target.value)}
-                                    placeholder="Describe what your team does..."
+                                    placeholder="What is your team's mission and goal?"
                                     className="mt-1 min-h-[80px]"
                                     rows={3}
                                 />
