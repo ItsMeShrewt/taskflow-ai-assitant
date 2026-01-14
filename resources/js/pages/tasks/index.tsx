@@ -12,6 +12,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import axios from 'axios';
 import ChatlingWidget from '@/components/chatling-widget';
+import showToast from '@/lib/toast';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -118,11 +119,12 @@ export default function TasksPage() {
       const response = await taskService.createTask(data);
       console.log('Task created:', response);
       setIsCreateDialogOpen(false);
+      showToast.task.created();
       await loadTasks();
       console.log('Tasks reloaded after creation');
     } catch (error) {
       console.error('Failed to create task:', error);
-      alert('Failed to create task. Check console for details.');
+      showToast.error('Failed to create task. Please try again.');
     }
   };
 

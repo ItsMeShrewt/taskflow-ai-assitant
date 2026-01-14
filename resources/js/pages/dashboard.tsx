@@ -27,6 +27,7 @@ import { useAutoRefresh } from '@/hooks/use-auto-refresh';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
+import showToast from '@/lib/toast';
 import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -181,12 +182,9 @@ export default function Dashboard({
         }
         
         // Show welcome message for newly created accounts (PM who just created a team)
-        if (flash?.accountCreated && flash?.success) {
+        if (flash?.accountCreated && flash?.success === 'team_created') {
             console.log('Showing welcome toast');
-            toast.success(`🎉 Welcome to TaskFlow! ${flash.success}`, {
-                duration: 5000,
-                position: 'top-center',
-            });
+            showToast.team.created();
         }
         
         // Show success toast when member is approved
@@ -196,15 +194,28 @@ export default function Dashboard({
                 position: 'top-center',
             });
         }
+
+        // Handle member approval/rejection from PM side
+        if (flash?.success === 'member_approved' && flash?.memberName) {
+            showToast.team.memberApproved(flash.memberName);
+        }
+        if (flash?.success === 'member_rejected' && flash?.memberName) {
+            showToast.team.memberRejected(flash.memberName);
+        }
+        
+        // Show info message for join requests
+        if (flash?.info === 'join_request' && flash?.teamName) {
+            showToast.team.joinRequest(flash.teamName);
+        }
         
         // Show info message for pending members
-        if (flash?.info && isPending) {
+        if (flash?.info && isPending && typeof flash.info === 'string') {
             toast.loading(flash.info, {
                 duration: 4000,
                 position: 'top-center',
             });
         }
-    }, [flash?.teamCode, flash?.memberApproved, flash?.teamName, flash?.accountCreated, flash?.success, flash?.info, isPending]);
+    }, [flash?.teamCode, flash?.memberApproved, flash?.teamName, flash?.accountCreated, flash?.success, flash?.info, flash?.memberName, isPending]);
     
     const copyCode = () => {
         if (flash?.teamCode) {

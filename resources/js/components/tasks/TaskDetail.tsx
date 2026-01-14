@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import TaskForm from './TaskForm';
 import { Pencil, Calendar, Clock, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import showToast from '@/lib/toast';
 
 interface Props {
   task: Task;
@@ -34,18 +35,26 @@ export default function TaskDetail({ task, onUpdate }: Props) {
     try {
       await taskService.updateTask(task.id, data);
       setIsEditDialogOpen(false);
+      showToast.task.updated();
       onUpdate();
     } catch (error) {
       console.error('Failed to update task:', error);
+      showToast.error('Failed to update task. Please try again.');
     }
   };
 
   const handleStatusChange = async (newStatus: 'pending' | 'in_progress' | 'completed' | 'cancelled') => {
     try {
       await taskService.updateTask(task.id, { status: newStatus });
+      if (newStatus === 'completed') {
+        showToast.task.completed();
+      } else {
+        showToast.task.statusChanged(newStatus.replace('_', ' '));
+      }
       onUpdate();
     } catch (error) {
       console.error('Failed to update task status:', error);
+      showToast.error('Failed to update task status.');
     }
   };
 

@@ -66,7 +66,7 @@ class TeamController extends Controller
 
         // Redirect to dashboard with team code in flash message
         return redirect()->route('dashboard')->with([
-            'success' => 'Team created successfully!',
+            'success' => 'team_created',
             'accountCreated' => true,
             'teamCode' => $team->code,
             'teamName' => $team->name,
@@ -105,7 +105,10 @@ class TeamController extends Controller
             ]);
         }
 
-        return redirect()->route('dashboard')->with('info', 'Your request to join ' . $team->name . ' has been sent. Please wait for approval.');
+        return redirect()->route('dashboard')->with([
+            'info' => 'join_request',
+            'teamName' => $team->name,
+        ]);
     }
 
     public function pendingMembers()
@@ -145,7 +148,10 @@ class TeamController extends Controller
             session()->put("member_{$userId}_approved", true);
         }
 
-        return back()->with('success', 'Member approved successfully!');
+        return back()->with([
+            'success' => 'member_approved',
+            'memberName' => $member->name,
+        ]);
     }
 
     public function rejectMember($userId)
@@ -163,7 +169,10 @@ class TeamController extends Controller
             'membership_status' => null,
         ]);
 
-        return back()->with('success', 'Member rejected successfully!');
+        return back()->with([
+            'success' => 'member_rejected',
+            'memberName' => $member->name,
+        ]);
     }
 
     public function edit($id)
@@ -212,6 +221,6 @@ class TeamController extends Controller
 
         $team->update($data);
 
-        return redirect()->route('team.edit', $team->id)->with('success', 'Team updated successfully!');
+        return redirect()->route('team.edit', $team->id)->with('success', 'team_updated');
     }
 }

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
-import toast from 'react-hot-toast';
+import showToast from '@/lib/toast';
 
 interface Team {
     id: number;
@@ -38,7 +38,11 @@ export default function EditTeam({ team }: EditTeamProps) {
 
     useEffect(() => {
         if (flash?.success) {
-            toast.success(flash.success);
+            if (flash.success === 'team_updated') {
+                showToast.team.updated();
+            } else {
+                showToast.success(flash.success);
+            }
         }
     }, [flash]);
 
@@ -273,7 +277,7 @@ export default function EditTeam({ team }: EditTeamProps) {
                                                     variant="outline"
                                                     onClick={() => {
                                                         navigator.clipboard.writeText(team.code);
-                                                        toast.success('Team code copied!');
+                                                        showToast.copied('Team code');
                                                     }}
                                                 >
                                                     Copy

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Trash2, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
+import showToast from '@/lib/toast';
 
 interface Props {
   task: Task;
@@ -31,9 +32,11 @@ export default function TaskCard({ task, onClick, onUpdate }: Props) {
     if (confirm('Are you sure you want to delete this task?')) {
       try {
         await taskService.deleteTask(task.id);
+        showToast.task.deleted();
         onUpdate();
       } catch (error) {
         console.error('Failed to delete task:', error);
+        showToast.error('Failed to delete task.');
       }
     }
   };
@@ -43,9 +46,15 @@ export default function TaskCard({ task, onClick, onUpdate }: Props) {
     const newStatus = task.status === 'completed' ? 'pending' : 'completed';
     try {
       await taskService.updateTask(task.id, { status: newStatus });
+      if (newStatus === 'completed') {
+        showToast.task.completed();
+      } else {
+        showToast.task.statusChanged('pending');
+      }
       onUpdate();
     } catch (error) {
       console.error('Failed to update task status:', error);
+      showToast.error('Failed to update task status.');
     }
   };
 
